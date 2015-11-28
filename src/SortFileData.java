@@ -23,13 +23,15 @@
  *          
  *          Store the result of each technique into an output file.
  *
- * @author Foothill College, [YOUR NAME HERE]
+ * @author Foothill College, Elena Aravina
  */
 
+import cs1c.*;
+
 import java.util.ArrayList;
-import cs1c.TimeConverter;
-
-
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public class SortFileData
 {
@@ -39,6 +41,7 @@ public class SortFileData
 	 * The size of a chunk is determined by the size of the memory.
 	 */
 	private static int MEM_SIZE = 50;
+    private static BufferedReader fileIn;
 
 	private static final boolean ENABLE_DEBUG = false;
 	private static final int OUTPUT_WIDTH = 70;
@@ -111,30 +114,85 @@ public class SortFileData
 	 * For debugging and displaying results.
 	 * Used to output a sample number of chunks. 
 	 */
-	private static void displaySampleChunks(ArrayList<Integer[]> fileChunksAsArrays, int numOfChunks) 
+	protected static void displaySampleChunks(ArrayList<Integer[]> fileChunksAsArrays, int numOfChunks)
 	{		
         int numOfFileChunks = fileChunksAsArrays.size();
-	    
-        for (int i = 0; i < numOfChunks; i++) 
+//        System.out.println(numOfFileChunks);
+
+        for (int i = 0; i < numOfChunks; i++)
         {
         	// check if requested number of chunks to display is valid	  
             if (i < numOfFileChunks)
             {
                 System.out.println();
                 System.out.println("Phase 1 : Sorted file chunks " + i + " and " + (i+1) + ":");
-                displaySortedChunks(fileChunksAsArrays.get(i), i, fileChunksAsArrays.get(i+1), (i+1));
+                displaySortedChunks(fileChunksAsArrays.get(i), i, fileChunksAsArrays.get(i + 1), (i + 1));
+//                System.out.println("Chunk 1 size: " + fileChunksAsArrays.get(i).length +
+//                        ". Chunk 2 size: " + fileChunksAsArrays.get(i+1).length);
                 i += 2;
             }       
         } // for all the chunks up to the requested number
 	}
-	
 
-	public static void main(String[] args) 
+
+    /**
+     * Sorts each individual chunk using shell sort.
+     * @param array     the chunk to sort
+     */
+    static void sortChunk(Integer[] array) {
+        FHsort.shellSort1(array);
+    }
+
+    /**
+     * Reads the plain text file and creates a list of chunks of data.
+     * @param filePath      file path
+     * @param chunkList     the list where all chunks will be stored
+     * @throws Exception    if the file is not found
+     */
+    protected static void readFileIntoIntArrays(String filePath, ArrayList<Integer[]> chunkList)
+    throws Exception {
+        // reading file
+        try {
+            fileIn = new BufferedReader(new FileReader(filePath));
+            // read the only line of numbers and transform it into the array of strings
+            String numbersLine = fileIn.readLine();
+            fileIn.close();
+            String [] tokens = numbersLine.split(",");
+
+            int chunksNum;
+            if (tokens.length % MEM_SIZE == 0) {
+                chunksNum = tokens.length / MEM_SIZE;
+            } else {
+                chunksNum = tokens.length / MEM_SIZE + 1;
+            }
+
+            // forming the chunks and adding to chunkList
+            for (int i = 0; i < chunksNum; i++) {
+                int memLimit;
+                // the last chunk - if it's going to be less than default memory limit
+                if (i == chunksNum - 1 && tokens.length % MEM_SIZE != 0) {
+                    memLimit = tokens.length - i * MEM_SIZE;
+                } else {
+                    memLimit = MEM_SIZE;
+                }
+
+                Integer[] thisChunk = new Integer[memLimit];
+                for (int j = 0; j < memLimit; j++) {
+                    thisChunk[j] = Integer.parseInt(tokens[j + MEM_SIZE * i]);
+                }
+                chunkList.add(thisChunk);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("FILE NOT FOUND!");
+        }
+    }
+
+	public static void main(String[] args) throws Exception
 	{
 		final String filePath = "resources/";	// Directory path for Mac OS X
 		//final String filePath = "resources\\";	// Directory path for Windows OS (i.e. Operating System)
 
-		// Sample input files in Comma-Seperated-Value (CSV) format		
+		// Sample input files in Comma-Seperated-Value (CSV) format
 		final String [] fileNames = {"numbers01.txt", "numbers02.txt", "numbers03.txt", "numbers04.txt"};
 
 		ArrayList<Integer[]> fileChunksAsArrays = new ArrayList<Integer[]>();
@@ -146,14 +204,14 @@ public class SortFileData
 			// Adds the chunk(s) to the list of chunks called fileChunksAsArrays
 			// Suggestion: Use Arrays.copyOfRange(int[] original, int from, int to)
 			// to copy a chunk found into fileChunksAsArrays
-			// for more details see: 
+			// for more details see:
 			// http://docs.oracle.com/javase/7/docs/api/java/util/Arrays.html#copyOfRange(int[],%20int,%20int)
 			readFileIntoIntArrays(filePath + fname, fileChunksAsArrays);
 		}
 
 
 		// Phase 1. Sort each individual chunk ---------------------------------------
-		// 
+		//
 		// Note: the total size of all chunks should be the same as the total number
 		// of values in each file divided by the memory size.
 		int numOfChunks = fileChunksAsArrays.size();
@@ -167,7 +225,7 @@ public class SortFileData
 				displayFileChunk(chunk, chunkIndex);
             	chunkIndex++;
 			}
-            
+
 			// Sorts each individual chunk.
 			// The sorted result is stored in the argument "chunk".
 			sortChunk(chunk);
@@ -201,7 +259,7 @@ public class SortFileData
 		startTime = System.nanoTime();
 
 		// Algorithm A
-		BasicArrayMerger.mergeSortedArrays(MEM_SIZE, fileChunksAsArrays, 
+		BasicArrayMerger.mergeSortedArrays(MEM_SIZE, fileChunksAsArrays,
 				potentialMinimums, filePath + "result_using_merge.txt");
 
 		// stop and calculate elapsed time
@@ -212,28 +270,28 @@ public class SortFileData
 				+ TimeConverter.convertTimeToString(estimatedTime) + "\n");
 
 
-		// Algorithm B. Use the minHeap technique we learned in modules to sort
-		// the various chunks with respect to each other and write the output to 
-		// a file called "result_using_min_heap.txt"
-		// Note: In class MinHeapArrayMerger, we are *not* explicitly calling FHsort.heapSort.
-		//
-		// Use the array of HeapTuple objects called "minHeap" to hold the current minimums.
-		// In your RUN_min_heap.txt file show a sample number of iterations.
-		HeapTuple[] minHeap = new HeapTuple[fileChunksAsArrays.size()];
-
-		// capture start time
-		startTime = System.nanoTime();
-
-		// Algorithm B
-		MinHeapArrayMerger.mergeSortedArrays(MEM_SIZE, fileChunksAsArrays, 
-				minHeap, filePath + "result_using_min_heap.txt");
-
-
-		// stop and calculate elapsed time
-		estimatedTime = System.nanoTime() - startTime;
-
-		// report algorithm time
-		System.out.println("\nAlgorithm B Elapsed Time: "
-				+ TimeConverter.convertTimeToString(estimatedTime) + "\n");		
+//		// Algorithm B. Use the minHeap technique we learned in modules to sort
+//		// the various chunks with respect to each other and write the output to
+//		// a file called "result_using_min_heap.txt"
+//		// Note: In class MinHeapArrayMerger, we are *not* explicitly calling FHsort.heapSort.
+//		//
+//		// Use the array of HeapTuple objects called "minHeap" to hold the current minimums.
+//		// In your RUN_min_heap.txt file show a sample number of iterations.
+//		HeapTuple[] minHeap = new HeapTuple[fileChunksAsArrays.size()];
+//
+//		// capture start time
+//		startTime = System.nanoTime();
+//
+//		// Algorithm B
+//		MinHeapArrayMerger.mergeSortedArrays(MEM_SIZE, fileChunksAsArrays,
+//				minHeap, filePath + "result_using_min_heap.txt");
+//
+//
+//		// stop and calculate elapsed time
+//		estimatedTime = System.nanoTime() - startTime;
+//
+//		// report algorithm time
+//		System.out.println("\nAlgorithm B Elapsed Time: "
+//				+ TimeConverter.convertTimeToString(estimatedTime) + "\n");
 	}
 }

@@ -1,0 +1,57 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+*.class
+
+#ignore IntelliJ IDEA IDE files and packages
+project05_elenaa.iml
+.idea
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# ignore object and class files
+*.o
+
+# ignore libraries
+*.lib
+*.a
+
+# ignore shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# ignore executables
+*.exe
+*.out
+*.app
+
+# ignore metada files
+.metadata
+
+# ignore project files
+.settings
+
+# ignore temporary editor files
+*~
+\#*\#
+.\#*
+
+# ignore Mac OS X specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
