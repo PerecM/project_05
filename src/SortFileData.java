@@ -119,7 +119,9 @@ public class SortFileData
         int numOfFileChunks = fileChunksAsArrays.size();
 //        System.out.println(numOfFileChunks);
 
-        for (int i = 0; i < numOfChunks; i++)
+        int allElementsNum = 0;
+
+        for (int i = 0; i < numOfChunks;)
         {
         	// check if requested number of chunks to display is valid	  
             if (i < numOfFileChunks)
@@ -129,10 +131,12 @@ public class SortFileData
                 displaySortedChunks(fileChunksAsArrays.get(i), i, fileChunksAsArrays.get(i + 1), (i + 1));
 //                System.out.println("Chunk 1 size: " + fileChunksAsArrays.get(i).length +
 //                        ". Chunk 2 size: " + fileChunksAsArrays.get(i+1).length);
+                allElementsNum += fileChunksAsArrays.get(i).length + fileChunksAsArrays.get(i + 1).length;
+
                 i += 2;
             }       
         } // for all the chunks up to the requested number
-	}
+    }
 
 
     /**
@@ -159,6 +163,7 @@ public class SortFileData
             fileIn.close();
             String [] tokens = numbersLine.split(",");
 
+            // how many chunks are we going to have
             int chunksNum;
             if (tokens.length % MEM_SIZE == 0) {
                 chunksNum = tokens.length / MEM_SIZE;
