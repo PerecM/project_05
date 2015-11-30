@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class DivideTest {
     public static void main(String[] args) throws Exception{
         ArrayList<Integer[]> fileChunksArrays = new ArrayList<Integer[]>();
-        SortFileData.readFileIntoIntArrays("resources/numbers04.txt", fileChunksArrays);
-        SortFileData.displaySampleChunks(fileChunksArrays, 3);
+        SortFileData.readFileIntoIntArrays("resources/numbers01.txt", fileChunksArrays);
+        SortFileData.displaySampleChunks(fileChunksArrays, 2);
     }
 }

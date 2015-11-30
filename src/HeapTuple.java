@@ -16,8 +16,8 @@ public class HeapTuple
 	/**
 	 * Constructs a tuple to stores the value and the 
 	 * array number it belongs to.
-	 * @param data          the number
-	 * @param arrayIndex    the index of the number
+	 * @param number          the number
+	 * @param index    the index of the number
 	 */
 	public HeapTuple(int number, int index)
 	{

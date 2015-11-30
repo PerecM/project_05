@@ -129,8 +129,8 @@ public class SortFileData
                 System.out.println();
                 System.out.println("Phase 1 : Sorted file chunks " + i + " and " + (i+1) + ":");
                 displaySortedChunks(fileChunksAsArrays.get(i), i, fileChunksAsArrays.get(i + 1), (i + 1));
-//                System.out.println("Chunk 1 size: " + fileChunksAsArrays.get(i).length +
-//                        ". Chunk 2 size: " + fileChunksAsArrays.get(i+1).length);
+                System.out.println("Chunk 1 size: " + fileChunksAsArrays.get(i).length +
+                        ". Chunk 2 size: " + fileChunksAsArrays.get(i+1).length);
                 allElementsNum += fileChunksAsArrays.get(i).length + fileChunksAsArrays.get(i + 1).length;
 
                 i += 2;
@@ -275,28 +275,55 @@ public class SortFileData
 				+ TimeConverter.convertTimeToString(estimatedTime) + "\n");
 
 
-//		// Algorithm B. Use the minHeap technique we learned in modules to sort
-//		// the various chunks with respect to each other and write the output to
-//		// a file called "result_using_min_heap.txt"
-//		// Note: In class MinHeapArrayMerger, we are *not* explicitly calling FHsort.heapSort.
-//		//
-//		// Use the array of HeapTuple objects called "minHeap" to hold the current minimums.
-//		// In your RUN_min_heap.txt file show a sample number of iterations.
-//		HeapTuple[] minHeap = new HeapTuple[fileChunksAsArrays.size()];
-//
-//		// capture start time
-//		startTime = System.nanoTime();
-//
-//		// Algorithm B
-//		MinHeapArrayMerger.mergeSortedArrays(MEM_SIZE, fileChunksAsArrays,
-//				minHeap, filePath + "result_using_min_heap.txt");
-//
-//
-//		// stop and calculate elapsed time
-//		estimatedTime = System.nanoTime() - startTime;
-//
-//		// report algorithm time
-//		System.out.println("\nAlgorithm B Elapsed Time: "
-//				+ TimeConverter.convertTimeToString(estimatedTime) + "\n");
+		// Algorithm B. Use the minHeap technique we learned in modules to sort
+		// the various chunks with respect to each other and write the output to
+		// a file called "result_using_min_heap.txt"
+		// Note: In class MinHeapArrayMerger, we are *not* explicitly calling FHsort.heapSort.
+		//
+		// Use the array of HeapTuple objects called "minHeap" to hold the current minimums.
+		// In your RUN_min_heap.txt file show a sample number of iterations.
+
+        /*
+        Go through phase 1 again to reestablish the data.
+        -----------------------------------------------------------------------------------
+         */
+
+        fileChunksAsArrays = new ArrayList<Integer[]>();
+        for (String fname : fileNames)
+        {
+            readFileIntoIntArrays(filePath + fname, fileChunksAsArrays);
+        }
+        numOfChunks = fileChunksAsArrays.size();
+        System.out.println("Number of arrays holding file input = " + numOfChunks);
+
+        for (Integer[] chunk : fileChunksAsArrays)
+        {
+            if (ENABLE_DEBUG)
+            {
+                displayFileChunk(chunk, chunkIndex);
+                chunkIndex++;
+            }
+            sortChunk(chunk);
+        }
+
+        /*
+        -----------------------------------------------------------------------------------
+         */
+
+		HeapTuple[] minHeap = new HeapTuple[fileChunksAsArrays.size()];
+
+		// capture start time
+		startTime = System.nanoTime();
+
+		// Algorithm B
+		MinHeapArrayMerger.mergeSortedArrays(MEM_SIZE, fileChunksAsArrays,
+				minHeap, filePath + "result_using_min_heap.txt");
+
+		// stop and calculate elapsed time
+		estimatedTime = System.nanoTime() - startTime;
+
+		// report algorithm time
+		System.out.println("\nAlgorithm B Elapsed Time: "
+				+ TimeConverter.convertTimeToString(estimatedTime) + "\n");
 	}
 }
