@@ -82,52 +82,6 @@ public class MinHeapArrayMerger {
         }
     }
 
-//    private static HeapTuple remove(int pointer, HeapTuple[] heapArray) {
-//        HeapTuple minTuple;
-//
-//        minTuple = heapArray[pointer];
-//
-//        heapArray[pointer] = heapArray[mSize--];
-//        percolateDown(pointer, heapArray);
-//
-//        return minTuple;
-//    }
-
-//    private static void percolateDown(int hole, HeapTuple[] heapArray, int pointer) {
-//        int child;
-//        HeapTuple tmp;
-//
-//        for(tmp = heapArray[hole]; 2 * hole <= pointer; hole = child ) {
-//            child = 2 * hole;
-//            // if 2 children, get the lesser of the two
-//            if( child != pointer
-//                    && heapArray[child + 1].getData() < heapArray[child].getData())
-//                child++;
-//            if( heapArray[child].getData() < tmp.getData())
-//                heapArray[hole] = heapArray[child];
-//            else
-//                break;
-//        }
-//        heapArray[hole] = tmp;
-//    }
-
-//    public static void insert( E x )
-//    {
-//        int hole;
-//        if( mSize == mCapacity - 1 )
-//            doubleCapacity();
-//// percolate up
-//        hole = ++mSize;
-//        for( ; hole > 1 && x.compareTo(mArray[hole/2]) < 0; hole /= 2 )
-//            mArray[hole] = mArray[hole/2];
-//        mArray[hole] = x;
-//    }
-
-//    private static void orderHeap(int pointer, HeapTuple[] heapArray) {
-//        for(int k = (heapArray.length - pointer)/2; k > pointer; k-- )
-////        for(int k = heapArray.length/2; k > pointer; k-- )
-//            percolateDown(k, heapArray, pointer);
-//    }
 
     private static void orderHeap(int pointer, HeapTuple[] heapArray) {
         HeapTuple[] tempHeap = new HeapTuple[heapArray.length];
